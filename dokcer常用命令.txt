@@ -1,0 +1,148 @@
+docker run hello-world检测docker是否安装
+
+#启动Docker服务
+systemctl start docker
+ 
+查询运行状态：
+systemctl status docker
+
+#停止Docker服务
+systemctl stop docker
+ 
+#重启Docker服务		
+service docker restart
+ 
+#添加Docker服务开机启动
+systemctl enable docker
+ 
+#从docker镜像仓库拉取mysql5.7的镜像
+docker pull mysql:5.7
+ 
+#查看当前机器上的docker镜像列表
+docker images
+ 
+#删除一个镜像，删除镜像时，必须是没有容器使用这个镜像时才能删除
+docker rmi 镜像id
+ 
+ 启动服务：docker run -d --name tomcat01 -p 443:8080 tomcat:8.5
+#有了镜像后用镜像创建并启动一个具体的容器：（下边例子是用拉取下来的镜像创建并启动一个mysql容器 )只需要改变端口号和--name后的容器名称即可 其他不用改变，创建容器时会创建自己的文件夹
+docker run -p 3307:3306 --name mysql-one -v $PWD/conf:/etc/mysql/conf.d -v $PWD/logs:/logs -v $PWD/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.6
+ 
+#查看当前正在运行的容器
+docker ps
+#查看所有的容器，包括目前不在运行的
+docker ps -a
+
+docker inspect 容器id/名称  查询容器信息
+ 
+#停止一个容器
+docker stop 名称/容器id
+ 
+#把停止的容器启动
+docker start 名称/容器id
+ 
+#重启容器
+docker restart 名称/容器id
+ 
+#查看容器日志
+docker logs 名称/容器id
+docker logs -f 名称/容器id
+ 
+#以交互模式进入容器内部
+docker exec -it 名称/容器id /bin/bash
+docker exec -it 名称/容器id /bin/sh
+docker exec -it 名称/容器id sh
+ 
+#删除容器 注意：容器必须是停用状态
+docker rm 名称/容器id
+
+docker inspect 容器名称/id    查看容器详细信息包含相关文件保存的目录都可以查看
+
+Dockerfile 的指令每执行一次都会在 docker 上新建一层，应该避免过多的层次能用&&就用&&
+指定镜像
+from <image>
+from <image>:<tag>
+比如：from comtat:8.05
+
+maintainter <name>
+例如：
+maintainter wanghujun <1710530418@qq.com>
+
+run用户在构建镜像时执行命令，有两种形式：
+shell执行：
+run <command>
+exec执行：
+run ["executable", "param1", "param2"]
+
+add添加本地文件到容器中,tar文件会自动解压，也能访问静态资源：
+add <src> <dest>
+比如：add home* /mydir/
+
+copy和add类似，但是不能自动解压，不能访问静态资源：
+copy <src> <dest>
+例如：copy test /mydir/
+
+cmd构建镜像以后使用，容器启动以后调用
+cmd ["executable", "param1", "param2"]
+
+配置容器：
+entrypoint  ["executable", "param1", "param2"]、
+
+label添加元数据，key=value形式：
+label version="1.0" description="这是一个Web服务器" by="IT笔录"
+
+env设置环境变量：
+格式：
+    ENV <key> <value>  #<key>之后的所有内容均会被视为其<value>的组成部分，因此，一次只能设置一个变量
+    ENV <key>=<value> ...  #可以设置多个变量，每个变量为一个"<key>=<value>"的键值对，如果<key>中包含空格，可以使用\来进行转义，也可以通过""来进行标示；另外，反斜线也可以用于续行
+示例：
+    ENV myName John Doe
+    ENV myDog Rex The Dog	
+    ENV myCat=fluffy
+
+expose暴露端口：前期不暴露的话后期启动可用-p去指定
+expose <port> [<prot>...]
+例如：
+expose 443 80
+
+volume用户指定持久化目录（该目录可以被挂载出去）
+格式：
+    VOLUME ["/path/to/dir"]
+示例：
+    VOLUME ["/data"]
+    VOLUME ["/var/www", "/var/log/apache2", "/etc/apache2"
+注：一个卷可以存在于一个或多个容器的指定目录，该目录可以绕过联合文件系统，并具有以下功能：
+1 卷可以容器间共享和重用
+2 容器并不一定要和其它容器共享卷
+3 修改卷后会立即生效
+4 对卷的修改不会对镜像产生影响
+5 卷会一直存在，直到没有任何容器在使用它
+
+workdir工作目录，docker运行时的工作目录，run cmd add copy等命令在该目录中执行，其中docker run 
+-w参数可以覆盖该参数。workdir 后面只能跟一个目录，出现多过时则把他们链接起来
+workdir /home/a  
+
+workdir /home
+workdir a
+workdir a  则是workdir /home/a/a 
+
+arg传递参数：
+格式：
+    ARG <name>[=<default value>]
+示例：
+    ARG site
+    ARG build_user=www
+
+
+格式：　
+	ONBUILD [INSTRUCTION]
+示例：
+　　ONBUILD ADD . /app/src
+　　ONBUILD RUN /usr/local/bin/python-build --dir /app/src
+注：
+　　NNBUID后面跟指令，当当前的镜像被用做其它镜像的基础镜像，该镜像中的触发器将会被钥触发
+
+构建镜像命令：docker build -t mycentos:1.0 . 
+
+
+

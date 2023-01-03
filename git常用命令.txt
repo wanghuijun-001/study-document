@@ -1,0 +1,68 @@
+创建用户名：git config --global user.name "wanghuijun"
+创建邮箱：git config --global user.emial "1710530418@qq.com"
+
+生产秘钥：
+本地执行：ssh-keygen -t rsa -C 1710530418@qq.com
+
+github.com个人中心有一个setting然后左侧有一个ssh and gpg keys,点击ssh keys设置标题，吧公钥放进去点击确定。
+测试连通性：ssh -T git@github.com  然后输入yes
+若和远程不能链接 多尝试几次 检查回车符号等
+
+远端建立项目会有一个标识，需要进行本地和远程关联
+先本地执行：git init
+关联项目：git remote add origin git@github.com:wanghuijun-001/springparent.git
+
+当前目录发布道远程分支：git add .
+提交到本地缓存：git commit -m "注释内容"
+提交到远程master分支：git push -u origin master
+
+下载项目：
+git clone -b 远程分支名 远程仓库地址
+
+已经克隆了master分支，想要到指定的分支，使用以下方法：
+git branch -a                  先查看当前远端分支情况
+git  checkout origin/xxx   选择远端xxx分支（origin为远程仓库别名）
+git branch xxx                 创建本地xxx分支
+git checkout xxx              选择本地新创建的分支就可以了
+
+查看当前状态：
+git status
+
+1、git log
+如果日志特别多的话，在git bash中，按向下键来查看更多，按q键退出查看日志。
+2、git show
+查看最近一次commit内容，也可以后面加commit号，单独查看此次版本的日志。
+
+3、git log -p
+-p参数输出的信息会更多，用来显示提交的改动记录，相当于多次使用git show [commit_id]的结果。
+
+
+git pull origin master ，在master分支下，保证当前代码与线上同步，是最新的
+git branch <分支名> ，正儿八经的新建分支。
+git checkout <分支名> ，切换 到新建的分支上，再进行下一步。
+git push origin <分支名> ,把本地分支推到远端，让远端也有一个你的分支，用来后面提交你的代码。
+直接一步到位操作：新建分支并切换到该分支：git checkout -b <分支名>
+
+撤销add:git reset HEAD 文件名/.是所有
+
+移除文件夹和git关联：find . -name ".git" | xargs rm -Rf
+
+合并主分支和开发分支，分别更新两个分支代码为最新，然后切换到主分支，执行命令git merge 开发分支名称
+
+删除分支：git branch -d 分支名称
+
+
+比较不同:git diff 分支名称 分支名称
+
+#查看本地仓库与远程仓库差别: git diff master origin/master
+
+#比较两个版本某个文件差异（--之后有空格，之后跟文件名）git diff test1 test2 -- index.html
+
+# 显示出所有有差异的文件列表：git diff branch1 branch2 --stat 
+
+不想让修改代码带到其他分支去就用git stash命令，切换为修改的分支则git stash pop即可。
+
+
+git remote update origin --prune    更新分支
+
+

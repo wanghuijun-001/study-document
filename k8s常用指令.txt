@@ -1,0 +1,41 @@
+k8s有两种节点，
+1、管理节点：管理k8s集群节点，一般由三个节点管理组成。
+2、工作节点：负责启动容器
+
+docker中安装k8s:
+docker run -d \
+--privileged \
+--restart=unless-stopped \
+--name=kuboard-spray \
+-p 80:80/tcp \
+-v /var/run/docker.sock:/var/run/docker.sock \
+-v ~/kuboard-spray-data:/data \
+eipwork/kuboard-spray:latest-amd64
+  # 如果抓不到这个镜像，可以尝试一下这个备用地址：
+  # swr.cn-east-2.myhuaweicloud.com/kuboard/kuboard-spray:latest-amd64
+
+k8s特点：
+1、自动装箱：基于容器对应用运行环境的资源配置要求自动部署应用服务器
+2、自我修复能力
+    1、当容器失败时，会对容器进行重启动
+    2、当node节点有问题时，会对容器重新部署和调度
+    3、当容器未通过监控检查时，会关闭此容器
+    4、容器运行正常，才会对外提供服务
+
+
+
+集群初始化命令：
+kubeadm init --kubernetes-version=v1.17.3 --pod-network-cidr=10.224.0.0/16 --apiserver-advertise-address=0.0.0.0 --image-repository registry.aliyuncs.com/google_containers --ignore-preflight-errors=Swap
+
+初始化集群有问题时候，需要清理集群
+sudo kubeadm reset
+
+
+
+kubeadm join 192.168.125.208:6443 --token agr3c6.6gf2t9i73znq8ijc \
+	--discovery-token-ca-cert-hash sha256:70e27d0dc07a7669cc716aeaed6d2661371b42eabec4da0150541b8e71a028ac 
+
+root	ALL=(ALL:ALL) ALL
+%admin ALL=(ALL) ALL
+%sudo	ALL=(ALL:ALL) ALL
+user ALL=(ALL:ALL) NOPASSWD: ALL
